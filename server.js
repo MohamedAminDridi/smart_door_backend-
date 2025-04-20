@@ -177,7 +177,7 @@ app.use(cors({
   origin: allowedOrigin,
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"], 
-  credentials: true
+  //credentials: true
 }));
 
 // MongoDB Connection
