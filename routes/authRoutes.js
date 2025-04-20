@@ -185,6 +185,11 @@ router.post("/login", async (req, res) => {
   }
 
   const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
+  // res.cookie('token', token, {
+  //   httpOnly: true,
+  //   secure: true,
+  //   sameSite: 'None' // ✅ Needed for cross-site cookies like Netlify <-> Render
+  // });
   res.json({ message: "Login successful", token, user: { _id: user._id, username, role: user.role } });
 });
 
