@@ -10,9 +10,15 @@ const {
   addOwnerToDoor,
   logAccess,
   getDoorLogs,
-  getDoorsByOwner
+  getDoorsByOwner,unlockDoor, lockDoor 
 } = require("../controllers/doorController");
+//
+//const { } = require('../controllers/doorController');
 
+router.get('/lock/:ip/on', unlockDoor);
+router.get('/lock/:ip/off', lockDoor);
+router.get('/lock/on', (req, res) => unlockDoor({ ...req, params: { ip: 'default' } }, res));
+router.get('/lock/off', (req, res) => lockDoor({ ...req, params: { ip: 'default' } }, res));
 // ✅ Update Door Status (PUT /api/doors/update-status/:id)
 router.put("/update-status/:id", async (req, res) => {
   try {

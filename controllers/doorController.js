@@ -30,7 +30,29 @@ exports.createDoor = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+exports.unlockDoor = async (req, res) => {
+  try {
+    const { ip } = req.params;
+    const targetIP = ip === 'default' ? process.env.ESP32_IP : ip;
+    await axios.get(`http://${targetIP}/lock/on`);
+    res.status(200).json({ message: 'Lock opened' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: 'Failed to open lock' });
+  }
+};
 
+exports.lockDoor = async (req, res) => {
+  try {
+    const { ip } = req.params;
+    const targetIP = ip === 'default' ? process.env.ESP32_IP : ip;
+    await axios.get(`http://${targetIP}/lock/off`);
+    res.status(200).json({ message: 'Lock closed' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).json({ error: 'Failed to close lock' });
+  }
+};
 // Controller to add an owner to a door
 exports.addOwnerToDoor = async (req, res) => {
   const { doorId, ownerId } = req.body;
