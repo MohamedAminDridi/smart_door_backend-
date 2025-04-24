@@ -180,6 +180,27 @@ app.use(cors({
   credentials: true
 }));
 
+//
+app.post("/api/doors/:doorId/:action", authMiddleware, async (req, res) => {
+  const { doorId, action } = req.params; // action: opened or closed
+  const userId = req.user._id;
+
+  try {
+    // Example: trigger ESP32
+    await axios.get(`http://${ESP32_IP}/door/${action}`);
+
+    // Save log
+    await Log.create({
+      user: userId,
+      doorId,
+      action
+    });
+
+    res.json({ message: `Door ${action} and logged.` });
+  } catch (error) {
+    res.status(500).json({ error: "Action failed", details: error.message });
+  }
+});
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("✅ Connected to MongoDB"))
