@@ -21,7 +21,7 @@ router.get('/lock/:ip/off', lockDoor);
 router.get('/lock/on', (req, res) => unlockDoor({ ...req, params: { ip: 'default' } }, res));
 router.get('/lock/off', (req, res) => lockDoor({ ...req, params: { ip: 'default' } }, res));
 // ✅ Update Door Status (PUT /api/doors/update-status/:id)
-router.post("/:doorId/:action", authenticateToken, async (req, res) => {
+router.post("/:doorId/:action", async (req, res) => {
   const { doorId, action } = req.params; // action: opened or closed
   const userId = req.user._id;
 
