@@ -10,11 +10,11 @@ const {
   addOwnerToDoor,
   logAccess,
   getDoorLogs,
-  getDoorsByOwner,unlockDoor, lockDoor 
+  getDoorsByOwner,unlockDoor, lockDoor ,
 } = require("../controllers/doorController");
 //
 //const { } = require('../controllers/doorController');
-const Log = require("./models/Log");
+const Log = require("../models/logs");
 
 router.get('/lock/:ip/on', unlockDoor);
 router.get('/lock/:ip/off', lockDoor);
