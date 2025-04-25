@@ -197,6 +197,7 @@ app.use("/api/doors", require("./routes/doorRoutes"));
 //
 // ESP32 LED Control
 const ESP32_IP = process.env.ESP32_IP;
+
 app.post("/api/doors/led/:state", async (req, res) => {
   try {
     const { state } = req.params;
@@ -207,26 +208,6 @@ app.post("/api/doors/led/:state", async (req, res) => {
     res.status(500).json({ error: "ESP32 not responding", details: err.message });
   }
 });
-//
-app.post("/api/doors/:doorId/:action", authMiddleware, async (req, res) => {
-  const { doorId, action } = req.params; // action: opened or closed
-  const userId = req.user._id;
 
-  try {
-    // Example: trigger ESP32
-    await axios.get(`http://${ESP32_IP}/door/${action}`);
-
-    // Save log
-    await Log.create({
-      user: userId,
-      doorId,
-      action
-    });
-
-    res.json({ message: `Door ${action} and logged.` });
-  } catch (error) {
-    res.status(500).json({ error: "Action failed", details: error.message });
-  }
-});
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
