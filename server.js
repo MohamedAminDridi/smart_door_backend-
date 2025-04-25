@@ -182,6 +182,32 @@ app.use(cors({
 }));
 
 //
+
+// MongoDB Connection
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ Connected to MongoDB"))
+  .catch(err => {
+    console.error("❌ MongoDB error:", err);
+    process.exit(1);
+  });
+
+// Routes
+app.use("/api/auth", require("./routes/authRoutes"));
+app.use("/api/doors", require("./routes/doorRoutes"));
+//
+// ESP32 LED Control
+const ESP32_IP = process.env.ESP32_IP;
+app.post("/api/doors/led/:state", async (req, res) => {
+  try {
+    const { state } = req.params;
+    const response = await axios.get(`http://${ESP32_IP}/led/${state}`, { timeout: 1000 });
+    res.json({ message: `LED ${state.toUpperCase()}`, response: response.data });
+  } catch (err) {
+    console.error("❌ ESP32 Error:", err.message);
+    res.status(500).json({ error: "ESP32 not responding", details: err.message });
+  }
+});
+//
 app.post("/api/doors/:doorId/:action", authMiddleware, async (req, res) => {
   const { doorId, action } = req.params; // action: opened or closed
   const userId = req.user._id;
@@ -202,30 +228,5 @@ app.post("/api/doors/:doorId/:action", authMiddleware, async (req, res) => {
     res.status(500).json({ error: "Action failed", details: error.message });
   }
 });
-// MongoDB Connection
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ Connected to MongoDB"))
-  .catch(err => {
-    console.error("❌ MongoDB error:", err);
-    process.exit(1);
-  });
-
-// Routes
-app.use("/api/auth", require("./routes/authRoutes"));
-app.use("/api/doors", require("./routes/doorRoutes"));
-
-// ESP32 LED Control
-const ESP32_IP = process.env.ESP32_IP;
-app.post("/api/doors/led/:state", async (req, res) => {
-  try {
-    const { state } = req.params;
-    const response = await axios.get(`http://${ESP32_IP}/led/${state}`, { timeout: 1000 });
-    res.json({ message: `LED ${state.toUpperCase()}`, response: response.data });
-  } catch (err) {
-    console.error("❌ ESP32 Error:", err.message);
-    res.status(500).json({ error: "ESP32 not responding", details: err.message });
-  }
-});
-
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
