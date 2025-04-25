@@ -167,6 +167,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const axios = require("axios");
 require("dotenv").config();
+const authMiddleware = require('./middleware/authMiddleware');
 
 const app = express();
 app.use(express.json());
