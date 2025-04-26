@@ -192,9 +192,13 @@ mongoose.connect(process.env.MONGO_URI)
   });
 
 // Routes
+const logRoutes = require('./routes/logs');
+
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/doors", require("./routes/doorRoutes"));
 //
+app.use('/api/logs', logRoutes);
+
 // ESP32 LED Control
 const ESP32_IP = process.env.ESP32_IP;
 
