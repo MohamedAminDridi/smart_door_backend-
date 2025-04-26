@@ -5,7 +5,11 @@ const User = require('../models/User'); // Assuming you have a user model for au
 
 // Middleware to verify if the user is admin or a regular user
 function verifyAdmin(req, res, next) {
-  const userId = req.user.id; // This assumes that you set the user ID in the request object after authentication
+  if (!req.user || !req.user.id) {
+    return res.status(401).json({ message: 'User not authenticated' });
+  }
+
+  const userId = req.user.id; // Assuming you set the user ID in the request object after authentication
 
   User.findById(userId).then(user => {
     if (user && user.role === 'admin') {
@@ -13,33 +17,47 @@ function verifyAdmin(req, res, next) {
     } else {
       res.status(403).json({ message: 'Permission denied. Admins only.' });
     }
-  }).catch(err => res.status(500).json({ message: 'Error checking user role' }));
+  }).catch(err => {
+    console.error('Error verifying admin:', err);
+    res.status(500).json({ message: 'Error checking user role' });
+  });
 }
 
 // Get all logs (for admins)
 router.get('/', verifyAdmin, async (req, res) => {
   try {
     const logs = await Log.find()
-      // .populate('user', 'username ') // Populate user details
-      // .populate('doorId', 'name');   // Populate door details
-    res.json(logs);
+      .populate({ path: 'user', select: 'username', strictPopulate: false })
+      .populate({ path: 'doorId', select: 'name', strictPopulate: false })
+      .lean(); // optional, faster
+
+    res.status(200).json(logs);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error('Error fetching logs:', err); // 👉 Show full error in console
+    res.status(500).json({
+      message: 'Server error while fetching logs.',
+      error: err.message // 👉 Send readable error to frontend
+    });
   }
 });
 
 // Get logs for a specific user's owned doors (for regular users)
 router.get('/logs/user', async (req, res) => {
-  const userId = req.user.id; // This assumes you have the user ID in the request object after authentication
+  const userId = req.user?.id; // Safely access user ID in case it's not defined
   
+  if (!userId) {
+    return res.status(401).json({ message: 'User not authenticated' });
+  }
+
   try {
-    // Find the user's owned doors
+    // Find the user's logs for their owned doors
     const userLogs = await Log.find({ user: userId })
-      .populate('user', 'name email')
-      .populate('doorId', 'name');
+      .populate('user', 'name email') // Include relevant user data
+      .populate('doorId', 'name'); // Include relevant door data
     
-    res.json(userLogs);
+    res.status(200).json(userLogs);
   } catch (err) {
+    console.error('Error fetching user logs:', err); // Log errors for debugging
     res.status(500).json({ message: err.message });
   }
 });
