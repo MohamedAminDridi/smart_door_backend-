@@ -17,7 +17,7 @@ function verifyAdmin(req, res, next) {
 }
 
 // Get all logs (for admins)
-router.get('/logs', verifyAdmin, async (req, res) => {
+router.get('/', verifyAdmin, async (req, res) => {
   try {
     const logs = await Log.find()
       .populate('user', 'name email') // Populate user details
