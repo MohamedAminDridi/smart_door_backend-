@@ -5,13 +5,18 @@ const Log = require('../models/logs');
 // Create a new log
 router.post('/', async (req, res) => {
   try {
-    const { user, doorId, action } = req.body;
-    const log = new Log({ user, doorId, action });
-    await log.save();
+    const { user, action, doorId } = req.body;
+
+    const log = await Log.create({
+      user,
+      action,
+      doorId
+    });
+
     res.status(201).json(log);
   } catch (error) {
-    console.error(error); // <--- VERY IMPORTANT TO SEE
-    res.status(500).json({ message: error.message });
+    console.error(error);
+    res.status(500).json({ error: error.message });
   }
 });
 
