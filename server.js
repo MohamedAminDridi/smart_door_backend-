@@ -192,7 +192,7 @@ mongoose.connect(process.env.MONGO_URI)
   });
 
 // Routes
-const logRoutes = require('./routes/logs');
+const logRoutes = require('./routes/logsRoutes');
 
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/doors", require("./routes/doorRoutes"));

@@ -6,14 +6,12 @@ const Log = require('../models/logs');
 router.post('/', async (req, res) => {
   try {
     const { user, doorId, action } = req.body;
-
-    const newLog = new Log({ user, doorId, action });
-    await newLog.save();
-
-    res.status(201).json(newLog);
+    const log = new Log({ user, doorId, action });
+    await log.save();
+    res.status(201).json(log);
   } catch (error) {
-    console.error('Error creating log:', error);
-    res.status(500).json({ message: 'Failed to create log' });
+    console.error(error); // <--- VERY IMPORTANT TO SEE
+    res.status(500).json({ message: error.message });
   }
 });
 
