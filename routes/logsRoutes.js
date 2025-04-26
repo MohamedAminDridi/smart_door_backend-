@@ -144,5 +144,26 @@ router.get('/logs/user', verifyToken, async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+router.post('/', async (req, res) => {
+  try {
+    const { user, doorId, action } = req.body;
 
+    if (!user || !doorId || !action) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    const newLog = new Log({
+      user,
+      doorId,
+      action,
+      timestamp: Date.now()
+    });
+
+    await newLog.save();
+    res.status(201).json({ message: 'Log created successfully', log: newLog });
+  } catch (err) {
+    console.error('Error creating log:', err);
+    res.status(500).json({ message: 'Server error creating log', error: err.message });
+  }
+});
 module.exports = router;
