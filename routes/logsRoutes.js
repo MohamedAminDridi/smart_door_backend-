@@ -20,8 +20,8 @@ function verifyAdmin(req, res, next) {
 router.get('/', verifyAdmin, async (req, res) => {
   try {
     const logs = await Log.find()
-      .populate('user', 'name email') // Populate user details
-      .populate('doorId', 'name');   // Populate door details
+      // .populate('user', 'username ') // Populate user details
+      // .populate('doorId', 'name');   // Populate door details
     res.json(logs);
   } catch (err) {
     res.status(500).json({ message: err.message });
