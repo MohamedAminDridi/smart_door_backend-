@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const Log = require('../models/logModel'); // Assuming your log model is in models/logModel.js
-const User = require('../models/userModel'); // Assuming you have a user model for authorization
+const Log = require('../models/logs'); // Assuming your log model is in models/logModel.js
+const User = require('../models/User'); // Assuming you have a user model for authorization
 
 // Middleware to verify if the user is admin or a regular user
 function verifyAdmin(req, res, next) {
