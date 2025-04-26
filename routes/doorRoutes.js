@@ -14,31 +14,31 @@ const {
 } = require("../controllers/doorController");
 //
 //const { } = require('../controllers/doorController');
-const Log = require("../models/logs");
+//const Log = require("../models/logs");
 
 router.get('/lock/:ip/on', unlockDoor);
 router.get('/lock/:ip/off', lockDoor);
 router.get('/lock/on', (req, res) => unlockDoor({ ...req, params: { ip: 'default' } }, res));
 router.get('/lock/off', (req, res) => lockDoor({ ...req, params: { ip: 'default' } }, res));
 // ✅ Update Door Status (PUT /api/doors/update-status/:id)
-router.post("/:doorId/:action", authenticateToken, async (req, res) => {
-  const { doorId, action } = req.params; // action: opened or closed
-  const userId = req.user._id;
+// router.post("/:doorId/:action", authenticateToken, async (req, res) => {
+//   const { doorId, action } = req.params; // action: opened or closed
+//   const userId = req.user._id;
 
-  try {
-    await axios.get(`http://${ESP32_IP}/door/${action}`);
+//   try {
+//     await axios.get(`http://${ESP32_IP}/door/${action}`);
 
-    await Log.create({
-      user: userId,
-      doorId,
-      action,
-    });
+//     await Log.create({
+//       user: userId,
+//       doorId,
+//       action,
+//     });
 
-    res.json({ message: `Door ${action} and logged.` });
-  } catch (error) {
-    res.status(500).json({ error: "Action failed", details: error.message });
-  }
-});
+//     res.json({ message: `Door ${action} and logged.` });
+//   } catch (error) {
+//     res.status(500).json({ error: "Action failed", details: error.message });
+//   }
+// });
 router.put("/update-status/:id", async (req, res) => {
   try {
     const { status } = req.body;
