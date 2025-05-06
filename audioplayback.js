@@ -1,4 +1,4 @@
-let playSocket = new WebSocket("ws://[ESP32-IP]:83");
+let playSocket = new WebSocket("ws://236b-197-3-6-252.ngrok-free.app:83");
 let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 playSocket.binaryType = 'arraybuffer';
